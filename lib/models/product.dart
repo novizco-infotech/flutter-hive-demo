@@ -13,6 +13,6 @@ class Product extends HiveObject{
   @HiveField(2)
   late DateTime date;
 
-  // @HiveField(3)
-  // late String description;
+  @HiveField(3)
+  late String description;
 }

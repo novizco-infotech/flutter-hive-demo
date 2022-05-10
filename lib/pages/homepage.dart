@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hiveflutter/models/product.dart';
 import 'package:hiveflutter/widgets/product_dialog.dart';
+import 'package:intl/intl.dart';
 
 import '../boxes.dart';
 
@@ -79,6 +80,7 @@ Widget buildProduct(
     child: ExpansionTile(
       tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Name : ${product.name}",
@@ -93,8 +95,10 @@ Widget buildProduct(
         ],
       ),
       subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Date : ${product.date}"),
+          Text("Date : ${DateFormat("dd-MM-yyyy").format(product.date)}"),
+          Text("Date : ${product.description}",maxLines: 2,),
         ],
       ),
       children: [
@@ -114,8 +118,8 @@ Widget buildButtons(BuildContext context, Product product) => Row(
               MaterialPageRoute(
                 builder: (context) => ProductDialog(
                   product: product,
-                  onClickedDone: (name, age) =>
-                      editTransaction(product, name, age),
+                  onClickedDone: (name, amount, date, description) =>
+                      editTransaction(product, name, amount, date, description),
                 ),
               ),
             ),
@@ -124,6 +128,7 @@ Widget buildButtons(BuildContext context, Product product) => Row(
         Expanded(
           child: TextButton.icon(
             label: const Text('Delete'),
+            
             icon: const Icon(Icons.delete),
             onPressed: () => deleteTransaction(product),
           ),
@@ -132,16 +137,12 @@ Widget buildButtons(BuildContext context, Product product) => Row(
     );
 
 Future addProduct(
-  String name,
-  //DateTime date,
-  double amount,
-  //String description
-) async {
+    String name, double amount, DateTime date, String description) async {
   final product = Product()
         ..name = name
-        // ..date = date
         ..amount = amount
-      //..description = description
+        ..date = date
+        ..description = description
       ;
   final box = Boxes.getProducts();
   box.add(product);
@@ -152,13 +153,12 @@ Future addProduct(
   // mybox.keys;
 }
 
-void editTransaction(
-  Product product,
-  String newName,
-  double newAmt,
-) {
+void editTransaction(Product product, String newName, double newAmt,
+    DateTime newDate, String newDscrptn) {
   product.name = newName;
   product.amount = newAmt;
+  product.date = newDate;
+  product.description = newDscrptn;
   // final box = Boxes.getStudents();
   // box.put(student.key, student);
   product.save();

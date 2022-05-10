@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hiveflutter/models/product.dart';
+import 'package:intl/intl.dart';
 
 class ProductDialog extends StatefulWidget {
   final Product? product;
   final Function(
     String name,
-   // DateTime date,
     double amount,
-    //String description,
+    DateTime date,
+    String description,
   ) onClickedDone;
 
   const ProductDialog({
@@ -25,7 +26,8 @@ class _ProductDialogState extends State<ProductDialog> {
   final nameCtrl = TextEditingController();
   final dateCtrl = TextEditingController();
   final amountCtrl = TextEditingController();
-  //final descriptionCtrl = TextEditingController();
+  final descriptionCtrl = TextEditingController();
+  var selectedDate;
 
   @override
   void initState() {
@@ -34,9 +36,10 @@ class _ProductDialogState extends State<ProductDialog> {
     if (widget.product != null) {
       final student = widget.product!;
       nameCtrl.text = student.name;
-      //dateCtrl.text = student.date.toString();
       amountCtrl.text = student.amount.toString();
-     // descriptionCtrl.text = student.description;
+      dateCtrl.text = DateFormat("dd-MM-yyyy").format(student.date);
+      selectedDate = student.date;
+      descriptionCtrl.text = student.description;
     }
   }
 
@@ -45,8 +48,23 @@ class _ProductDialogState extends State<ProductDialog> {
     nameCtrl.dispose();
     dateCtrl.dispose();
     amountCtrl.dispose();
-    //descriptionCtrl.dispose();
+    descriptionCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        //initialDatePickerMode: DatePickerMode.day,
+        firstDate: DateTime(2021),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+        dateCtrl.text = DateFormat.yMd().format(selectedDate);
+      });
+    }
   }
 
   @override
@@ -63,22 +81,25 @@ class _ProductDialogState extends State<ProductDialog> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               const SizedBox(height: 8),
-              buildName(),
+              nameField(),
               const SizedBox(height: 8),
-              buildAmt(),
+              amtField(),
               const SizedBox(height: 8),
+              dateField(),
+              const SizedBox(height: 8),
+              descriptionField()
             ],
           ),
         ),
       ),
       actions: <Widget>[
-        buildCancelButton(context),
-        buildAddButton(context, isEditing: isEditing),
+        cancelButton(context),
+        addButton(context, isEditing: isEditing),
       ],
     );
   }
 
-  Widget buildName() => TextFormField(
+  Widget nameField() => TextFormField(
         controller: nameCtrl,
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
@@ -88,7 +109,7 @@ class _ProductDialogState extends State<ProductDialog> {
             name != null && name.isEmpty ? 'Enter Product Name' : null,
       );
 
-  Widget buildAmt() => TextFormField(
+  Widget amtField() => TextFormField(
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
           hintText: 'Enter Amount',
@@ -100,12 +121,40 @@ class _ProductDialogState extends State<ProductDialog> {
         controller: amountCtrl,
       );
 
-  Widget buildCancelButton(BuildContext context) => TextButton(
+  Widget dateField() => GestureDetector(
+        onTap: () => _selectDate(context),
+        child: AbsorbPointer(
+          child: TextFormField(
+            controller: dateCtrl,
+            decoration: const InputDecoration(
+              labelText: "Date",
+              border: OutlineInputBorder(),
+              icon: Icon(Icons.calendar_today),
+            ),
+            validator: (value) {
+              if (value!.isEmpty) return "Please enter a date for your task";
+              return null;
+            },
+          ),
+        ),
+      );
+
+  Widget descriptionField() => TextFormField(
+        controller: descriptionCtrl,
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          hintText: 'Enter Description',
+        ),
+        validator: (value) =>
+            value != null && value.isEmpty ? 'Enter a Description' : null,
+      );
+
+  Widget cancelButton(BuildContext context) => TextButton(
         child: const Text('Cancel'),
         onPressed: () => Navigator.of(context).pop(),
       );
 
-  Widget buildAddButton(BuildContext context, {required bool isEditing}) {
+  Widget addButton(BuildContext context, {required bool isEditing}) {
     final text = isEditing ? 'Save' : 'Add';
 
     return TextButton(
@@ -115,14 +164,14 @@ class _ProductDialogState extends State<ProductDialog> {
 
         if (isValid) {
           final name = nameCtrl.text;
-          //final date = DateTime.tryParse(dateCtrl.text);
           final amount = double.tryParse(amountCtrl.text);
-          //final description = descriptionCtrl.text;
+          final date = selectedDate;
+          final description = descriptionCtrl.text;
           widget.onClickedDone(
             name,
-           // date!,
             amount!,
-            //description
+            date,
+            description,
           );
           Navigator.of(context).pop();
         }
