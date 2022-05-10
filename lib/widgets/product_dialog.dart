@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:flutter/material.dart';
 import 'package:hiveflutter/models/product.dart';
 import 'package:intl/intl.dart';
@@ -23,11 +25,21 @@ class ProductDialog extends StatefulWidget {
 
 class _ProductDialogState extends State<ProductDialog> {
   final formKey = GlobalKey<FormState>();
-  final nameCtrl = TextEditingController();
   final dateCtrl = TextEditingController();
   final amountCtrl = TextEditingController();
   final descriptionCtrl = TextEditingController();
   var selectedDate;
+  var productname;
+  final _currencies = [
+    "Orange",
+    "Mango",
+    "Biscuit",
+    "Chocolate",
+    "Pen",
+    "IceCream",
+    "Strawberry",
+    "Milk"
+  ];
 
   @override
   void initState() {
@@ -35,7 +47,7 @@ class _ProductDialogState extends State<ProductDialog> {
 
     if (widget.product != null) {
       final student = widget.product!;
-      nameCtrl.text = student.name;
+      productname = student.name;
       amountCtrl.text = student.amount.toString();
       dateCtrl.text = DateFormat("dd-MM-yyyy").format(student.date);
       selectedDate = student.date;
@@ -45,7 +57,6 @@ class _ProductDialogState extends State<ProductDialog> {
 
   @override
   void dispose() {
-    nameCtrl.dispose();
     dateCtrl.dispose();
     amountCtrl.dispose();
     descriptionCtrl.dispose();
@@ -87,7 +98,8 @@ class _ProductDialogState extends State<ProductDialog> {
               const SizedBox(height: 8),
               dateField(),
               const SizedBox(height: 8),
-              descriptionField()
+              descriptionField(),
+              const SizedBox(height: 8),
             ],
           ),
         ),
@@ -99,14 +111,40 @@ class _ProductDialogState extends State<ProductDialog> {
     );
   }
 
-  Widget nameField() => TextFormField(
-        controller: nameCtrl,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: 'Enter Product Name',
-        ),
-        validator: (name) =>
-            name != null && name.isEmpty ? 'Enter Product Name' : null,
+  Widget nameField() => FormField<String>(
+        validator: (value) {
+          if (productname == null) {
+            return 'Please select a Product';
+          }
+        },
+        builder: (FormFieldState<String> state) {
+          return InputDecorator(
+            decoration: InputDecoration(
+                errorText: state
+                    .errorText, //by this method we can give error msg in dropdown field.
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0))),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: productname,
+                hint: const Text("Select a Product"),
+                isDense: true,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    productname = newValue;
+                    state.didChange(newValue);
+                  });
+                },
+                items: _currencies.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+          );
+        },
       );
 
   Widget amtField() => TextFormField(
@@ -116,7 +154,7 @@ class _ProductDialogState extends State<ProductDialog> {
         ),
         keyboardType: TextInputType.number,
         validator: (amount) => amount != null && double.tryParse(amount) == null
-            ? 'Enter a amount'
+            ? 'Please enter a Amount'
             : null,
         controller: amountCtrl,
       );
@@ -129,10 +167,10 @@ class _ProductDialogState extends State<ProductDialog> {
             decoration: const InputDecoration(
               labelText: "Date",
               border: OutlineInputBorder(),
-              icon: Icon(Icons.calendar_today),
+              suffixIcon: Icon(Icons.calendar_today),
             ),
             validator: (value) {
-              if (value!.isEmpty) return "Please enter a date for your task";
+              if (value!.isEmpty) return "Please enter a date";
               return null;
             },
           ),
@@ -163,7 +201,7 @@ class _ProductDialogState extends State<ProductDialog> {
         final isValid = formKey.currentState!.validate();
 
         if (isValid) {
-          final name = nameCtrl.text;
+          final name = productname;
           final amount = double.tryParse(amountCtrl.text);
           final date = selectedDate;
           final description = descriptionCtrl.text;
