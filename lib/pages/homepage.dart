@@ -100,7 +100,7 @@ Widget buildProduct(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Date : ${DateFormat("dd-MM-yyyy").format(product.date)}"),
-          Wrap( 
+          Wrap(
             children: product.specs
                 .map((e) => Chip(
                       label: Text(e),
@@ -125,14 +125,12 @@ Widget buildButtons(BuildContext context, Product product) => Row(
           child: TextButton.icon(
             label: const Text('Edit'),
             icon: const Icon(Icons.edit),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ProductDialog(
-                  product: product,
-                  onClickedDone: (name, amount, date, specs) =>
-                      editTransaction(
-                          product, name, amount, date, specs),
-                ),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => ProductDialog(
+                product: product,
+                onClickedDone: (name, amount, date, specs) =>
+                    editTransaction(product, name, amount, date, specs),
               ),
             ),
           ),
@@ -147,8 +145,7 @@ Widget buildButtons(BuildContext context, Product product) => Row(
       ],
     );
 
-Future addProduct(String name, double amount, DateTime date,
-    List specs) async {
+Future addProduct(String name, double amount, DateTime date, List specs) async {
   final product = Product()
     ..name = name
     ..amount = amount
