@@ -1,9 +1,9 @@
-
 import 'package:hive/hive.dart';
 
 part 'product.g.dart';
+
 @HiveType(typeId: 0)
-class Product extends HiveObject{
+class Product extends HiveObject {
   @HiveField(0)
   late String name;
 
@@ -14,5 +14,5 @@ class Product extends HiveObject{
   late DateTime date;
 
   @HiveField(3)
-  late String description;
+  late List specs;
 }

@@ -6,12 +6,8 @@ import 'package:intl/intl.dart';
 
 class ProductDialog extends StatefulWidget {
   final Product? product;
-  final Function(
-    String name,
-    double amount,
-    DateTime date,
-    String description,
-  ) onClickedDone;
+  final Function(String name, double amount, DateTime date,
+      List specs) onClickedDone;
 
   const ProductDialog({
     Key? key,
@@ -27,9 +23,9 @@ class _ProductDialogState extends State<ProductDialog> {
   final formKey = GlobalKey<FormState>();
   final dateCtrl = TextEditingController();
   final amountCtrl = TextEditingController();
-  final descriptionCtrl = TextEditingController();
   var selectedDate;
   var productname;
+  List listSpec = [];
   final _currencies = [
     "Orange",
     "Mango",
@@ -39,6 +35,16 @@ class _ProductDialogState extends State<ProductDialog> {
     "IceCream",
     "Strawberry",
     "Milk"
+  ];
+
+  final specs = [
+    "Fresh",
+    "Cheap",
+    "Costly",
+    "Warranty",
+    "No Warranty",
+    "Offer",
+    "Deal of Day"
   ];
 
   @override
@@ -51,7 +57,7 @@ class _ProductDialogState extends State<ProductDialog> {
       amountCtrl.text = student.amount.toString();
       dateCtrl.text = DateFormat("dd-MM-yyyy").format(student.date);
       selectedDate = student.date;
-      descriptionCtrl.text = student.description;
+      listSpec = student.specs;
     }
   }
 
@@ -59,7 +65,6 @@ class _ProductDialogState extends State<ProductDialog> {
   void dispose() {
     dateCtrl.dispose();
     amountCtrl.dispose();
-    descriptionCtrl.dispose();
     super.dispose();
   }
 
@@ -98,7 +103,7 @@ class _ProductDialogState extends State<ProductDialog> {
               const SizedBox(height: 8),
               dateField(),
               const SizedBox(height: 8),
-              descriptionField(),
+              specField(),
               const SizedBox(height: 8),
             ],
           ),
@@ -177,14 +182,35 @@ class _ProductDialogState extends State<ProductDialog> {
         ),
       );
 
-  Widget descriptionField() => TextFormField(
-        controller: descriptionCtrl,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: 'Enter Description',
-        ),
-        validator: (value) =>
-            value != null && value.isEmpty ? 'Enter a Description' : null,
+  Widget specField() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Select Categories :"),
+          Wrap(
+            children: specs.map((e) {
+              return InkWell(
+                onTap: () {
+                  setState(() {
+                    listSpec.contains(e) ? listSpec.remove(e) : listSpec.add(e);
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Chip(
+                    backgroundColor:
+                        listSpec.contains(e) ? Colors.indigo : Colors.grey,
+                    label: Text(e),
+                    labelStyle: TextStyle(
+                        color:
+                            listSpec.contains(e) ? Colors.white : Colors.black),
+                    padding: const EdgeInsets.all(2),
+                    elevation: 3,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
       );
 
   Widget cancelButton(BuildContext context) => TextButton(
@@ -204,13 +230,8 @@ class _ProductDialogState extends State<ProductDialog> {
           final name = productname;
           final amount = double.tryParse(amountCtrl.text);
           final date = selectedDate;
-          final description = descriptionCtrl.text;
-          widget.onClickedDone(
-            name,
-            amount!,
-            date,
-            description,
-          );
+          final specs = listSpec;
+          widget.onClickedDone(name, amount!, date, specs);
           Navigator.of(context).pop();
         }
       },

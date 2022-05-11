@@ -20,7 +20,7 @@ class ProductAdapter extends TypeAdapter<Product> {
       ..name = fields[0] as String
       ..amount = fields[1] as double
       ..date = fields[2] as DateTime
-      ..description = fields[3] as String;
+      ..specs = (fields[3] as List).cast<dynamic>();
   }
 
   @override
@@ -34,7 +34,7 @@ class ProductAdapter extends TypeAdapter<Product> {
       ..writeByte(2)
       ..write(obj.date)
       ..writeByte(3)
-      ..write(obj.description);
+      ..write(obj.specs);
   }
 
   @override
