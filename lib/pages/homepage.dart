@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
-    //Hive.box('products').close();
     Hive.close();
     super.dispose();
   }
@@ -48,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     if (products.isEmpty) {
       return const Center(
         child: Text(
-          'No product yet!',
+          'Empty...',
           style: TextStyle(fontSize: 24),
         ),
       );
@@ -101,11 +100,14 @@ Widget buildProduct(
           Text("Date : ${DateFormat("dd-MM-yyyy").format(product.date)}"),
           Wrap(
             children: product.specs
-                .map((e) => Chip(
-                      label: Text(e),
-                      elevation: 5,
-                      labelStyle: const TextStyle(color: Colors.white),
-                      backgroundColor: Colors.indigo,
+                .map((e) => Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: Chip(
+                        label: Text(e),
+                        elevation: 5,
+                        labelStyle: const TextStyle(color: Colors.white),
+                        backgroundColor: Colors.indigo,
+                      ),
                     ))
                 .toList(),
           )
@@ -152,11 +154,6 @@ Future addProduct(String name, double amount, DateTime date, List specs) async {
     ..specs = specs;
   final box = Boxes.getProducts();
   box.add(product);
-  //box.put('mykey', student);
-  // final mybox = Boxes.getTransactions();
-  // final myTransaction = mybox.get('key');
-  // mybox.values;
-  // mybox.keys;
 }
 
 void editTransaction(Product product, String newName, double newAmt,
@@ -165,15 +162,10 @@ void editTransaction(Product product, String newName, double newAmt,
   product.amount = newAmt;
   product.date = newDate;
   product.specs = newSpecs;
-  // final box = Boxes.getStudents();
-  // box.put(student.key, student);
   product.save();
 }
 
 void deleteTransaction(Product product) {
   final box = Boxes.getProducts();
   box.delete(product.key);
-
-  // student.delete();
-  //setState(() => transactions.remove(transaction));
 }

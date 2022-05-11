@@ -6,8 +6,8 @@ import 'package:intl/intl.dart';
 
 class ProductDialog extends StatefulWidget {
   final Product? product;
-  final Function(String name, double amount, DateTime date,
-      List specs) onClickedDone;
+  final Function(String name, double amount, DateTime date, List specs)
+      onClickedDone;
 
   const ProductDialog({
     Key? key,
@@ -37,15 +37,7 @@ class _ProductDialogState extends State<ProductDialog> {
     "Milk"
   ];
 
-  final specs = [
-    "Fresh",
-    "Cheap",
-    "Costly",
-    "Warranty",
-    "No Warranty",
-    "Offer",
-    "Deal of Day"
-  ];
+  final specs = ["Fresh", "Cheap", "Costly", "Offer", "Deal of Day"];
 
   @override
   void initState() {
@@ -72,7 +64,6 @@ class _ProductDialogState extends State<ProductDialog> {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        //initialDatePickerMode: DatePickerMode.day,
         firstDate: DateTime(2021),
         lastDate: DateTime(2101));
     if (picked != null) {
@@ -87,8 +78,9 @@ class _ProductDialogState extends State<ProductDialog> {
   Widget build(BuildContext context) {
     final isEditing = widget.product != null;
     final title = isEditing ? 'Edit Product' : 'Add Product';
-
     return AlertDialog(
+      elevation: 10,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       title: Text(title),
       content: Form(
         key: formKey,
@@ -113,6 +105,7 @@ class _ProductDialogState extends State<ProductDialog> {
         cancelButton(context),
         addButton(context, isEditing: isEditing),
       ],
+      actionsAlignment: MainAxisAlignment.spaceAround,
     );
   }
 
@@ -185,7 +178,7 @@ class _ProductDialogState extends State<ProductDialog> {
   Widget specField() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Select Categories :"),
+          const Text("Select Specs :"),
           Wrap(
             children: specs.map((e) {
               return InkWell(
@@ -213,16 +206,14 @@ class _ProductDialogState extends State<ProductDialog> {
         ],
       );
 
-  Widget cancelButton(BuildContext context) => TextButton(
-        child: const Text('Cancel'),
-        onPressed: () => Navigator.of(context).pop(),
-      );
+  Widget cancelButton(BuildContext context) => customButton(context,
+      title: 'Cancel', onPressed: () => Navigator.of(context).pop());
 
   Widget addButton(BuildContext context, {required bool isEditing}) {
     final text = isEditing ? 'Save' : 'Add';
-
-    return TextButton(
-      child: Text(text),
+    return customButton(
+      context,
+      title: text,
       onPressed: () async {
         final isValid = formKey.currentState!.validate();
 
@@ -235,6 +226,22 @@ class _ProductDialogState extends State<ProductDialog> {
           Navigator.of(context).pop();
         }
       },
+    );
+  }
+
+  Widget customButton(BuildContext context,
+      {required String title, required void Function()? onPressed}) {
+    return SizedBox(
+      width: 100,
+      child: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.indigo,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        ),
+        child: Text(title, style: const TextStyle(color: Colors.white)),
+        onPressed: onPressed,
+      ),
     );
   }
 }
