@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hiveflutter/utils.dart';
 import 'package:intl/intl.dart';
 import '../models/product.dart';
 import 'dialog.dart';
@@ -34,7 +35,7 @@ class ProductCard extends StatelessWidget {
                           label: Text(e),
                           elevation: 5,
                           labelStyle: const TextStyle(color: Colors.white),
-                          backgroundColor: Colors.indigo,
+                          backgroundColor: maincolor,
                         ),
                       ))
                   .toList(),

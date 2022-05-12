@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hiveflutter/models/product.dart';
 import 'package:intl/intl.dart';
 
-import '../boxes.dart';
+import '../utils.dart';
 
 class ProductDialog extends StatefulWidget {
   final Product? product;
@@ -83,7 +83,7 @@ class _ProductDialogState extends State<ProductDialog> {
       title: Text(
         title,
         textAlign: TextAlign.center,
-        style: const TextStyle(color: Colors.indigo),
+        style: TextStyle(color: maincolor),
       ),
       content: Form(
         key: formKey,
@@ -194,7 +194,7 @@ class _ProductDialogState extends State<ProductDialog> {
                   padding: const EdgeInsets.all(2.0),
                   child: Chip(
                     backgroundColor:
-                        listSpec.contains(e) ? Colors.indigo : Colors.grey,
+                        listSpec.contains(e) ? maincolor : Colors.grey,
                     label: Text(e),
                     labelStyle: TextStyle(
                         color:
@@ -241,7 +241,7 @@ class _ProductDialogState extends State<ProductDialog> {
       width: 100,
       child: TextButton(
         style: TextButton.styleFrom(
-          backgroundColor: Colors.indigo,
+          backgroundColor: maincolor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         ),

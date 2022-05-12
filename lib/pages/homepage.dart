@@ -4,7 +4,7 @@ import 'package:hiveflutter/models/product.dart';
 import 'package:hiveflutter/widgets/dialog.dart';
 import 'package:hiveflutter/widgets/productcard.dart';
 
-import '../boxes.dart';
+import '../utils.dart';
 
 class HomePage extends StatefulWidget {
   @override
