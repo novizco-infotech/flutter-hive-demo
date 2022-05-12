@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:hiveflutter/models/product.dart';
 import 'package:intl/intl.dart';
 
+import '../boxes.dart';
+
 class ProductDialog extends StatefulWidget {
   final Product? product;
-  final Function(String name, double amount, DateTime date, List specs)
-      onClickedDone;
 
   const ProductDialog({
     Key? key,
     this.product,
-    required this.onClickedDone,
   }) : super(key: key);
 
   @override
@@ -107,7 +106,7 @@ class _ProductDialogState extends State<ProductDialog> {
       ),
       actions: <Widget>[
         cancelButton(context),
-        addButton(context, isEditing: isEditing),
+        addButton(context, widget.product, isEditing: isEditing),
       ],
       actionsAlignment: MainAxisAlignment.spaceAround,
     );
@@ -213,7 +212,8 @@ class _ProductDialogState extends State<ProductDialog> {
   Widget cancelButton(BuildContext context) => customButton(context,
       title: 'Cancel', onPressed: () => Navigator.of(context).pop());
 
-  Widget addButton(BuildContext context, {required bool isEditing}) {
+  Widget addButton(BuildContext context, Product? product,
+      {required bool isEditing}) {
     final text = isEditing ? 'Save' : 'Add';
     return customButton(
       context,
@@ -226,7 +226,9 @@ class _ProductDialogState extends State<ProductDialog> {
           final amount = double.tryParse(amountCtrl.text);
           final date = selectedDate;
           final specs = listSpec;
-          widget.onClickedDone(name, amount!, date, specs);
+          isEditing
+              ? editTransaction(product!, name, amount!, date, specs)
+              : addProduct(name, amount!, date, specs);
           Navigator.of(context).pop();
         }
       },
@@ -248,4 +250,28 @@ class _ProductDialogState extends State<ProductDialog> {
       ),
     );
   }
+}
+
+Future addProduct(String name, double amount, DateTime date, List specs) async {
+  final product = Product()
+    ..name = name
+    ..amount = amount
+    ..date = date
+    ..specs = specs;
+  final box = Boxes.getProducts();
+  box.add(product);
+}
+
+void editTransaction(Product product, String newName, double newAmt,
+    DateTime newDate, List newSpecs) {
+  product.name = newName;
+  product.amount = newAmt;
+  product.date = newDate;
+  product.specs = newSpecs;
+  product.save();
+}
+
+void deleteTransaction(Product product) {
+  final box = Boxes.getProducts();
+  box.delete(product.key);
 }

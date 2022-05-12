@@ -27,9 +27,7 @@ class _HomePageState extends State<HomePage> {
             IconButton(
                 onPressed: () => showDialog(
                       context: context,
-                      builder: (context) => const ProductDialog(
-                        onClickedDone: addProduct,
-                      ),
+                      builder: (context) => const ProductDialog(),
                     ),
                 icon: const Icon(Icons.add))
           ],
@@ -61,14 +59,4 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
-}
-
-Future addProduct(String name, double amount, DateTime date, List specs) async {
-  final product = Product()
-    ..name = name
-    ..amount = amount
-    ..date = date
-    ..specs = specs;
-  final box = Boxes.getProducts();
-  box.add(product);
 }

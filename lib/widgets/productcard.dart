@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../boxes.dart';
 import '../models/product.dart';
 import 'dialog.dart';
 
@@ -61,8 +59,6 @@ Widget buildButtons(BuildContext context, Product product) => Row(
               context: context,
               builder: (context) => ProductDialog(
                 product: product,
-                onClickedDone: (name, amount, date, specs) =>
-                    editTransaction(product, name, amount, date, specs),
               ),
             ),
           ),
@@ -76,20 +72,6 @@ Widget buildButtons(BuildContext context, Product product) => Row(
         )
       ],
     );
-
-void editTransaction(Product product, String newName, double newAmt,
-    DateTime newDate, List newSpecs) {
-  product.name = newName;
-  product.amount = newAmt;
-  product.date = newDate;
-  product.specs = newSpecs;
-  product.save();
-}
-
-void deleteTransaction(Product product) {
-  final box = Boxes.getProducts();
-  box.delete(product.key);
-}
 
 Text textSection(String text) {
   return Text(
