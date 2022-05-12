@@ -56,12 +56,7 @@ Widget buildButtons(BuildContext context, Product product) => Row(
           child: TextButton.icon(
             label: const Text('Edit'),
             icon: const Icon(Icons.edit),
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => ProductDialog(
-                product: product,
-              ),
-            ),
+            onPressed: () => showForm(context, product),
           ),
         ),
         Expanded(
@@ -73,6 +68,15 @@ Widget buildButtons(BuildContext context, Product product) => Row(
         )
       ],
     );
+
+Future<dynamic> showForm(BuildContext context, Product product) {
+  return showDialog(
+            context: context,
+            builder: (context) => ProductDialog(
+              product: product,
+            ),
+          );
+}
 
 Text textSection(String text) {
   return Text(
