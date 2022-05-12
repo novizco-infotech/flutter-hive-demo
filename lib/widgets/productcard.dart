@@ -71,11 +71,11 @@ Widget buildButtons(BuildContext context, Product product) => Row(
 
 Future<dynamic> showForm(BuildContext context, Product product) {
   return showDialog(
-            context: context,
-            builder: (context) => ProductDialog(
-              product: product,
-            ),
-          );
+    context: context,
+    builder: (context) => ProductDialog(
+      product: product,
+    ),
+  );
 }
 
 Text textSection(String text) {

@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
           title: const Text('Flutter Hive App'),
           centerTitle: true,
           actions: [
-            IconButton(onPressed: showForm,icon: const Icon(Icons.add))
+            IconButton(onPressed: showForm, icon: const Icon(Icons.add))
           ],
         ),
         body: ValueListenableBuilder<Box<Product>>(
