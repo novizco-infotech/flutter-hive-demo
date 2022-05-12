@@ -81,7 +81,11 @@ class _ProductDialogState extends State<ProductDialog> {
     return AlertDialog(
       elevation: 10,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      title: Text(title),
+      title: Text(
+        title,
+        textAlign: TextAlign.center,
+        style: const TextStyle(color: Colors.indigo),
+      ),
       content: Form(
         key: formKey,
         child: SingleChildScrollView(

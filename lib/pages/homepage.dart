@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hiveflutter/models/product.dart';
-import 'package:hiveflutter/widgets/product_dialog.dart';
+import 'package:hiveflutter/widgets/dialog.dart';
 import 'package:intl/intl.dart';
 
 import '../boxes.dart';
@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Hive Flutter App'),
+          title: const Text('Flutter Hive App'),
           centerTitle: true,
           actions: [
             IconButton(
@@ -38,12 +38,12 @@ class _HomePageState extends State<HomePage> {
           valueListenable: Boxes.getProducts().listenable(),
           builder: (context, box, _) {
             final products = box.values.toList().cast<Product>();
-            return buildContent(products);
+            return viewSection(products);
           },
         ),
       );
 
-  Widget buildContent(List<Product> products) {
+  Widget viewSection(List<Product> products) {
     if (products.isEmpty) {
       return const Center(
         child: Text(
@@ -52,20 +52,13 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }
-    return Column(
-      children: [
-        const SizedBox(height: 24),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(8),
-            itemCount: products.length,
-            itemBuilder: (BuildContext context, int index) {
-              final product = products[index];
-              return buildProduct(context, product);
-            },
-          ),
-        ),
-      ],
+    return ListView.builder(
+      padding: const EdgeInsets.all(8),
+      itemCount: products.length,
+      itemBuilder: (BuildContext context, int index) {
+        final product = products[index];
+        return buildProduct(context, product);
+      },
     );
   }
 }
@@ -75,23 +68,16 @@ Widget buildProduct(
   Product product,
 ) {
   return Card(
-    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+    elevation: 20,
     color: Colors.white,
     child: ExpansionTile(
-      tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      tilePadding: const EdgeInsets.symmetric(horizontal: 26, vertical: 6),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Name : ${product.name}",
-            maxLines: 2,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          Text(
-            "Amount : ${product.amount}",
-            maxLines: 2,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
+          textSection("Name : ${product.name}"),
+          textSection("Amount : ${product.amount}"),
         ],
       ),
       subtitle: Column(
@@ -168,4 +154,12 @@ void editTransaction(Product product, String newName, double newAmt,
 void deleteTransaction(Product product) {
   final box = Boxes.getProducts();
   box.delete(product.key);
+}
+
+Text textSection(String text) {
+  return Text(
+    text,
+    maxLines: 2,
+    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+  );
 }
